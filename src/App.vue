@@ -1,30 +1,55 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+  <div id="app">
+    <v-app>
+    <div v-if="!isLoggedIn">
+      <router-view></router-view>
+    </div>
+    <div v-else>
+      <v-app-bar app :floating="true">
+        <v-toolbar-title class="app-title">Student Management</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <span>{{ loggedUser }}</span>
+        <v-btn v-if="isLoggedIn" color="secondary" @click="logout">Logout</v-btn>
+      </v-app-bar>
+      <div class="mt-15">
+        <students-table :canEdit="isAdmin" :canDelete="isAdmin" :canAdd="isAdmin"></students-table>
+      </div>
+    </div>
+    </v-app>
+  </div>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import {mapGetters, useStore} from "vuex";
+import StudentsTable from './components/StudentsTable.vue';
+import router from "@/router";
+import {VAppBar} from "vuetify/components";
 
-nav {
-  padding: 30px;
-}
+export default {
+  components: {
+    StudentsTable,
+    VAppBar,
+  },
+  computed: {
+    ...mapGetters(['isLoggedIn', 'hasRole', 'loggedInUser']),
+    isAdmin() {
+      return this.hasRole("administrator");
+    },
+    loggedUser(){
+      return this.loggedInUser.username;
+    }
+  },
+  setup() {
+    const store = useStore();
 
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+    const logout = () => {
+      store.dispatch("logout");
+      router.push("/");
+    };
 
-nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+    return {
+      logout,
+    };
+  },
+};
+</script>

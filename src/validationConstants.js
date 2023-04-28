@@ -12,10 +12,10 @@ export const indexYearRules = [
 ];
 export const indexNumberRules = [
     (value) => !!value || "Index number is required",
-    (value) => value.length === 4 || "Name must be 4 characters",
+    (value) => String(value).length === 4 || "Index number must be 4 characters",
 ];
 export const currentYearOfStudyRules = [
     (value) => !!value || "Current year of study is required",
-    (value) => value.length == 1 || "Current year of study must be  1 character",
+    (value) => String(value).length === 1 || "Current year of study must be  1 character",
 ];
 
